@@ -39,6 +39,9 @@ public class EggCatcher extends JavaPlugin {
     }
 
     public void onEnable() {
+    	getLogger().info("Remake by SunnySide community");
+    	getLogger().info("Only support 1.13 (not included 1.13.x)");
+    	getLogger().info("Let's start loading");
         this.CheckConfigurationFile();
 
         PluginManager pm = this.getServer().getPluginManager();
