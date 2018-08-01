@@ -31,6 +31,7 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.*;
+import org.bukkit.entity.minecart.ExplosiveMinecart;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -42,6 +43,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
+import java.util.Locale;
 
 public class EggCatcherEntityListener implements Listener {
 
@@ -69,6 +71,7 @@ public class EggCatcherEntityListener implements Listener {
     JavaPlugin plugin;
 	private final File captureLogFile;
 	private final EggCatcherLogger captureLogger;
+	EggCatcher main;
 
 
     public EggCatcherEntityListener(JavaPlugin plugin) {
@@ -89,8 +92,8 @@ public class EggCatcherEntityListener implements Listener {
         this.preventCatchingBabyAnimals = this.config.getBoolean("PreventCatchingBabyAnimals", true);
         this.preventCatchingTamedAnimals = this.config.getBoolean("PreventCatchingTamedAnimals", true);
         this.preventCatchingShearedSheeps = this.config.getBoolean("PreventCatchingShearedSheeps", true);
-        this.spawnChickenOnFail = this.config.getBoolean("SpawnChickenOnFail", true);
-        this.spawnChickenOnSuccess = this.config.getBoolean("SpawnChickenOnSuccess", false);
+        //this.spawnChickenOnFail = this.config.getBoolean("SpawnChickenOnFail", true);
+        //this.spawnChickenOnSuccess = this.config.getBoolean("SpawnChickenOnSuccess", false);
         this.vaultTargetBankAccount = this.config.getString("VaultTargetBankAccount", "");
         this.deleteVillagerInventoryOnCatch = this.config.getBoolean("DeleteVillagerInventoryOnCatch", false);
         this.logCaptures = this.config.getBoolean("LogEggCaptures", false);
@@ -98,7 +101,7 @@ public class EggCatcherEntityListener implements Listener {
 		this.captureLogger = new EggCatcherLogger(captureLogFile);
 	}
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public void onEntityHitByEgg(EntityDamageEvent event) {
         EntityDamageByEntityEvent damageEvent = null;
         Egg egg = null;
@@ -118,15 +121,9 @@ public class EggCatcherEntityListener implements Listener {
 
         egg = (Egg) damageEvent.getDamager();
         eggType = EggType.getEggType(entity);
-
         if (eggType == null) {
-            return;
+        	return;
         }
-
-        if (!this.spawnChickenOnFail) {
-            EggCatcher.eggs.add(egg);
-        }
-
         if (this.preventCatchingBabyAnimals) {
             if (entity instanceof Ageable) {
                 if (!((Ageable) entity).isAdult()) {
@@ -150,23 +147,30 @@ public class EggCatcherEntityListener implements Listener {
                 }
             }
         }
-
-
         EggCaptureEvent eggCaptureEvent = new EggCaptureEvent(entity, egg);
         this.plugin.getServer().getPluginManager().callEvent(eggCaptureEvent);
         if (eggCaptureEvent.isCancelled()) {
+        	main.getLogger().info("Canceled");
             return;
         }
 
         if (egg.getShooter() instanceof Player) {
             Player player = (Player) egg.getShooter();
-
+            if(this.usePermissions) {
+            	 if (!player.hasPermission("eggcatcher.catch." + eggType.getFriendlyName().toLowerCase()) && !player.hasPermission("eggcatcher.catch." + eggType.name().toLowerCase())) {
+            		  player.sendMessage(config.getString("Messages.PermissionFail")); 
+            		  if (!this.looseEggOnFail) {
+                          player.getInventory().addItem(new ItemStack(Material.EGG, 1));
+                      }
+            		  return;
+            	 }
+            }
+  
             if (this.usePermissions) {
                 if (!player.hasPermission("eggcatcher.catch." + eggType.getFriendlyName().toLowerCase()) && !player.hasPermission("eggcatcher.catch." + eggType.name().toLowerCase())) {
                     player.sendMessage(config.getString("Messages.PermissionFail"));
                     if (!this.looseEggOnFail) {
-                        player.getInventory().addItem(new ItemStack(Material.EGG, 1));
-                        EggCatcher.eggs.add(egg);
+                        player.getInventory().addItem(new ItemStack(Material.EGG, 1));  
                     }
                     return;
                 }
@@ -182,7 +186,6 @@ public class EggCatcherEntityListener implements Listener {
                     }
                     if (!this.looseEggOnFail) {
                         player.getInventory().addItem(new ItemStack(Material.EGG, 1));
-                        EggCatcher.eggs.add(egg);
                     }
                     return;
                 }
@@ -200,7 +203,6 @@ public class EggCatcherEntityListener implements Listener {
                     }
                     if (!this.looseEggOnFail) {
                         player.getInventory().addItem(new ItemStack(Material.EGG, 1));
-                        EggCatcher.eggs.add(egg);
                     }
                     return;
                 }
@@ -214,16 +216,13 @@ public class EggCatcherEntityListener implements Listener {
                     player.sendMessage(String.format(config.getString("Messages.VaultFail"), vaultCost));
                     if (!this.looseEggOnFail) {
                         player.getInventory().addItem(new ItemStack(Material.EGG, 1));
-                        EggCatcher.eggs.add(egg);
                     }
                     return;
                 } else {
                     EggCatcher.economy.withdrawPlayer(player, vaultCost);
-
                     if (!this.vaultTargetBankAccount.isEmpty()) {
                         EggCatcher.economy.bankDeposit(this.vaultTargetBankAccount, vaultCost);
                     }
-
                     player.sendMessage(String.format(config.getString("Messages.VaultSuccess"), vaultCost));
                 }
             }
@@ -240,7 +239,7 @@ public class EggCatcherEntityListener implements Listener {
         }
          Material spawnegg = null;
          try {
-        	 spawnegg = Material.matchMaterial(entity.getName()+"_SPAWN_EGG");
+        	 spawnegg = Material.matchMaterial(entity.getName().trim().replaceAll(" ", "_").toUpperCase(Locale.ROOT)+"_SPAWN_EGG");
 		} catch (Exception e) {
 			// TODO: handle exception
 			spawnegg=null;
@@ -255,12 +254,8 @@ public class EggCatcherEntityListener implements Listener {
         if (this.smokeEffect) {
             entity.getWorld().playEffect(entity.getLocation(), Effect.SMOKE, 0);
         }
-        ItemStack eggStack = new ItemStack(spawnegg, 1, eggType.getCreatureId());
-
-        eggStack = NbtReflection.setNewEntityTag(eggStack, entity.getType().name());
-
+        ItemStack eggStack = new ItemStack(spawnegg, 1);
         String customName = ((LivingEntity) entity).getCustomName();
-
         if (customName != null) {
             // Entity had custom name
             ItemMeta meta = eggStack.getItemMeta();
@@ -293,12 +288,6 @@ public class EggCatcherEntityListener implements Listener {
         }
 
         entity.getWorld().dropItem(entity.getLocation(), eggStack);
-
-        if (!this.spawnChickenOnSuccess) {
-            if (!EggCatcher.eggs.contains(egg)) {
-                EggCatcher.eggs.add(egg);
-            }
-        }
         
         if (this.logCaptures){
 			captureLogger.logToFile("Player " + ((Player) egg.getShooter()).getName() + " caught " + entity.getType() + " at X" + Math.round(entity.getLocation().getX()) + ",Y" + Math.round(entity.getLocation().getY()) + ",Z" + Math.round(entity.getLocation().getZ()));
