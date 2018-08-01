@@ -237,7 +237,7 @@ public class EggCatcherEntityListener implements Listener {
         }
          Material spawnegg = null;
          try {
-        	 spawnegg = Material.matchMaterial(entity.getName());
+        	 spawnegg = Material.matchMaterial(entity.getName()+"_SPAWN_EGG");
 		} catch (Exception e) {
 			// TODO: handle exception
 			spawnegg=null;
