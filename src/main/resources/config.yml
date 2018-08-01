@@ -9,8 +9,6 @@ NonPlayerCatching: false
 PreventCatchingBabyAnimals: true
 PreventCatchingTamedAnimals: true
 PreventCatchingShearedSheeps: true
-SpawnChickenOnSuccess: false
-SpawnChickenOnFail: true
 VaultTargetBankAccount: ""
 DeleteVillagerInventoryOnCatch: false
 LogEggCaptures: false

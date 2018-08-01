@@ -45,7 +45,7 @@ public class EggCatcher extends JavaPlugin {
         PluginManager pm = this.getServer().getPluginManager();
 
         final EggCatcherPlayerListener playerListener = new EggCatcherPlayerListener();
-        final EggCatcherEntityListener entityListener = new EggCatcherEntityListener(this);
+        final EggCatcherEntityListener entityListener = new EggCatcherEntityListener();
 
         pm.registerEvents(playerListener, this);
         pm.registerEvents(entityListener, this);
