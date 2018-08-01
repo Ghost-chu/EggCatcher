@@ -21,11 +21,13 @@ package me.shansen.EggCatcher;
 import me.shansen.EggCatcher.listeners.EggCatcherEntityListener;
 import me.shansen.EggCatcher.listeners.EggCatcherPlayerListener;
 import net.milkbowl.vault.economy.Economy;
+
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Egg;
+import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bstats.Metrics;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,8 +56,6 @@ public class EggCatcher extends JavaPlugin {
                 economy = economyProvider.getProvider();
             }
         }
-
-        Metrics metrics = new Metrics(this);
     }
 
     public void CheckConfigurationFile() {
@@ -68,7 +68,6 @@ public class EggCatcher extends JavaPlugin {
             this.getConfig().set("VaultCost.Parrot", 0.0);
             this.getConfig().set("ItemCost.Amount.Parrot", 0.0);
             this.getConfig().set("HealthPercentage.Parrot", 100.0);
-
             this.getConfig().set("ConfigVersion", 3.1);
             this.saveConfig();
         } else {

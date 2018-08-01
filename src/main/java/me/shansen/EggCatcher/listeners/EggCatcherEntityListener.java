@@ -27,6 +27,7 @@ import me.shansen.nbt.NbtReflection;
 
 import org.bukkit.Effect;
 import org.bukkit.Material;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -160,7 +161,7 @@ public class EggCatcherEntityListener implements Listener {
             Player player = (Player) egg.getShooter();
 
             if (this.usePermissions) {
-                if (!player.hasPermission("eggcatcher.catch." + eggType.getFriendlyName().toLowerCase())) {
+                if (!player.hasPermission("eggcatcher.catch." + eggType.getFriendlyName().toLowerCase()) && !player.hasPermission("eggcatcher.catch." + eggType.name().toLowerCase())) {
                     player.sendMessage(config.getString("Messages.PermissionFail"));
                     if (!this.looseEggOnFail) {
                         player.getInventory().addItem(new ItemStack(Material.EGG, 1));
@@ -169,11 +170,9 @@ public class EggCatcherEntityListener implements Listener {
                     return;
                 }
             }
-
             if (this.useHealthPercentage) {
                 double healthPercentage = config.getDouble("HealthPercentage." + eggType.getFriendlyName());
-                double currentHealth = ((LivingEntity) entity).getHealth() * 100.0 / ((LivingEntity) entity)
-                        .getMaxHealth();
+                double currentHealth = ((LivingEntity) entity).getHealth() * 100.0 / ((LivingEntity) entity).getMaxHealth();
                 if (healthPercentage < currentHealth) {
                     if (this.healthPercentageFailMessage.length() > 0) {
                         player.sendMessage(String.format(this.healthPercentageFailMessage, healthPercentage));
@@ -225,28 +224,6 @@ public class EggCatcherEntityListener implements Listener {
                     player.sendMessage(String.format(config.getString("Messages.VaultSuccess"), vaultCost));
                 }
             }
-
-            if (this.useItemCost && !freeCatch) {
-                int itemId = config.getInt("ItemCost.ItemId", 266);
-                int itemData = config.getInt("ItemCost.ItemData", 0);
-                int itemAmount = config.getInt("ItemCost.Amount." + eggType.getFriendlyName(), 0);
-                @SuppressWarnings("deprecation")
-				ItemStack itemStack = new ItemStack(itemId, itemAmount, (short) itemData);
-                if (player.getInventory().containsAtLeast(itemStack, itemStack.getAmount())) {
-                    player.sendMessage(String.format(config.getString("Messages.ItemCostSuccess"),
-                            String.valueOf(itemAmount)));
-                    player.getInventory().removeItem(itemStack);
-                } else {
-                    player.sendMessage(String.format(config.getString("Messages.ItemCostFail"),
-                            String.valueOf(itemAmount)));
-                    if (!this.looseEggOnFail) {
-                        player.getInventory().addItem(new ItemStack(Material.EGG, 1));
-                        EggCatcher.eggs.add(egg);
-                    }
-                    return;
-                }
-            }
-        } else {
             // Dispenser
             if (!this.nonPlayerCatching) {
                 return;
@@ -258,7 +235,16 @@ public class EggCatcherEntityListener implements Listener {
                 }
             }
         }
-
+         Material spawnegg = null;
+         try {
+        	 spawnegg = Material.matchMaterial(entity.getName());
+		} catch (Exception e) {
+			// TODO: handle exception
+			spawnegg=null;
+		}
+         if(spawnegg==null) {
+        	 return;
+         }
         entity.remove();
         if (this.explosionEffect) {
             entity.getWorld().createExplosion(entity.getLocation(), 0);
@@ -266,10 +252,9 @@ public class EggCatcherEntityListener implements Listener {
         if (this.smokeEffect) {
             entity.getWorld().playEffect(entity.getLocation(), Effect.SMOKE, 0);
         }
+        ItemStack eggStack = new ItemStack(spawnegg, 1, eggType.getCreatureId());
 
-        ItemStack eggStack = new ItemStack(Material.MONSTER_EGG, 1, eggType.getCreatureId());
-
-        eggStack = NbtReflection.setNewEntityTag(eggStack, entity.getType().getName());
+        eggStack = NbtReflection.setNewEntityTag(eggStack, entity.getType().name());
 
         String customName = ((LivingEntity) entity).getCustomName();
 

@@ -2,7 +2,6 @@ UsePermissions: true
 UseCatchChance: true
 LooseEggOnFail: true
 UseVaultCost: false
-UseItemCost: false
 UseHealthPercentage: false
 ExplosionEffect: true
 SmokeEffect: false
@@ -103,7 +102,6 @@ VaultCost:
   Zombie: 0.0
   ZombieHorse: 0.0
   ZombieVillager: 0.0
-ItemCost:
   ItemId: 371
   ItemData: 0
   Amount:
