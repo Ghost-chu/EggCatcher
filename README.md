@@ -1,6 +1,8 @@
-# EggCatcher [![Build Status](https://travis-ci.org/shansen/EggCatcher.svg?branch=master)](https://travis-ci.org/shansen/EggCatcher)
+# EggCatcher [![Build Status](https://travis-ci.org/Ghost-chu/EggCatcher-Reremake.svg?branch=master)](https://travis-ci.org/Ghost-chu/EggCatcher-Reremake)
 
 This plugin allows the players to get spawn eggs by throwing regular eggs at mobs. It is intended to be simple to set up and use. If you make any changes, pull requests are appreciated.
+
+The 1.13 version remake by Ghost_chu(Minecraft SunnySide Community)
 
 ## Current features ##
 * Configurable mob health limit.
@@ -20,8 +22,3 @@ Download the jar file and the [configuration](http://dev.bukkit.org/server-mods/
 ## Configuration and permissions ##
 * [Permission nodes](http://dev.bukkit.org/server-mods/eggcatcher/pages/permisson-nodes/)
 * [Configuration](http://dev.bukkit.org/server-mods/eggcatcher/pages/configuration/)
-
-## Video ##
-[![ScreenShot](https://www.dropbox.com/s/uujjrmat555j707/eggcatchervideo.png?raw=1)](http://youtu.be/k1Wcj8Cvmsc)
-
-Video credits: [VariationVault](http://www.youtube.com/user/VariationVault)
