@@ -64,7 +64,15 @@ public enum EggType {
     RABBIT(EntityType.RABBIT, 101, "Rabbit"),
     POLAR_BEAR(EntityType.POLAR_BEAR, 102, "PolarBear"),
     SHULKER(EntityType.SHULKER, 69, "Shulker"),
-    PARROT(EntityType.PARROT, 105, "Parrot");
+    PARROT(EntityType.PARROT, 105, "Parrot"),
+    DOLPHIN(EntityType.DOLPHIN, 105, "Dolphin"),
+    DROWNED(EntityType.DROWNED, 105, "Drowned"),
+    PHAMTOM(EntityType.PHANTOM, 105, "Phontom"),
+    PUFFERFISH(EntityType.PUFFERFISH, 105, "PufferFish"),
+    SALMON(EntityType.SALMON, 105, "Salmon"),
+    TURTLE(EntityType.TURTLE, 105, "Turtle"),
+    TROPICAL_FISH(EntityType.TROPICAL_FISH, 105, "TropicalFish");
+	
 
     private final EntityType entityType;
     private final Integer creatureId;

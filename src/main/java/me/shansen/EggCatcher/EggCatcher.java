@@ -22,9 +22,7 @@ import me.shansen.EggCatcher.listeners.EggCatcherEntityListener;
 import me.shansen.EggCatcher.listeners.EggCatcherPlayerListener;
 import net.milkbowl.vault.economy.Economy;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Egg;
-import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
