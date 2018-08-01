@@ -63,8 +63,6 @@ public class EggCatcherEntityListener implements Listener {
     private final String catchChanceFailMessage;
     private final String healthPercentageFailMessage;
     private final String vaultTargetBankAccount;
-    private final boolean spawnChickenOnFail;
-    private final boolean spawnChickenOnSuccess;
     private final boolean deleteVillagerInventoryOnCatch;
     private final boolean logCaptures;
     FileConfiguration config;
