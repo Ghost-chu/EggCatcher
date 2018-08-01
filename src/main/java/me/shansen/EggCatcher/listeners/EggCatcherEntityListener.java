@@ -28,6 +28,7 @@ import me.shansen.nbt.NbtReflection;
 import org.bukkit.Effect;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -49,7 +50,7 @@ public class EggCatcherEntityListener implements Listener {
     private final boolean useHealthPercentage;
     private final boolean looseEggOnFail;
     private final boolean useVaultCost;
-    private final boolean useItemCost;
+    //private final boolean useItemCost;
     private final boolean explosionEffect;
     private final boolean smokeEffect;
     private final boolean nonPlayerCatching;
@@ -78,7 +79,7 @@ public class EggCatcherEntityListener implements Listener {
         this.useHealthPercentage = this.config.getBoolean("UseHealthPercentage", false);
         this.looseEggOnFail = this.config.getBoolean("LooseEggOnFail", true);
         this.useVaultCost = this.config.getBoolean("UseVaultCost", false);
-        this.useItemCost = this.config.getBoolean("UseItemCost", false);
+        //this.useItemCost = this.config.getBoolean("UseItemCost", false);
         this.explosionEffect = this.config.getBoolean("ExplosionEffect", true);
         this.smokeEffect = this.config.getBoolean("SmokeEffect", false);
         this.nonPlayerCatching = this.config.getBoolean("NonPlayerCatching", true);
@@ -172,7 +173,9 @@ public class EggCatcherEntityListener implements Listener {
             }
             if (this.useHealthPercentage) {
                 double healthPercentage = config.getDouble("HealthPercentage." + eggType.getFriendlyName());
-                double currentHealth = ((LivingEntity) entity).getHealth() * 100.0 / ((LivingEntity) entity).getMaxHealth();
+	  	  		AttributeInstance MaxHealth = ((LivingEntity) entity).getAttribute(Attribute.GENERIC_MAX_HEALTH);
+	  	  		Double getMaxhealth = MaxHealth.getBaseValue();
+                double currentHealth = ((LivingEntity) entity).getHealth() * 100.0 / getMaxhealth;
                 if (healthPercentage < currentHealth) {
                     if (this.healthPercentageFailMessage.length() > 0) {
                         player.sendMessage(String.format(this.healthPercentageFailMessage, healthPercentage));
@@ -207,7 +210,7 @@ public class EggCatcherEntityListener implements Listener {
 
             if (this.useVaultCost && !freeCatch) {
                 vaultCost = config.getDouble("VaultCost." + eggType.getFriendlyName());
-                if (!EggCatcher.economy.has(player.getName(), vaultCost)) {
+                if (!EggCatcher.economy.has(player, vaultCost)) {
                     player.sendMessage(String.format(config.getString("Messages.VaultFail"), vaultCost));
                     if (!this.looseEggOnFail) {
                         player.getInventory().addItem(new ItemStack(Material.EGG, 1));
@@ -215,7 +218,7 @@ public class EggCatcherEntityListener implements Listener {
                     }
                     return;
                 } else {
-                    EggCatcher.economy.withdrawPlayer(player.getName(), vaultCost);
+                    EggCatcher.economy.withdrawPlayer(player, vaultCost);
 
                     if (!this.vaultTargetBankAccount.isEmpty()) {
                         EggCatcher.economy.bankDeposit(this.vaultTargetBankAccount, vaultCost);
@@ -272,7 +275,7 @@ public class EggCatcherEntityListener implements Listener {
         }
 
         if(entity instanceof Horse) {
-            if(((Horse) entity).isCarryingChest()){
+            if(((ChestedHorse) entity).isCarryingChest()){
                 entity.getWorld().dropItemNaturally(entity.getLocation(), new ItemStack(Material.CHEST));
             }
         }
