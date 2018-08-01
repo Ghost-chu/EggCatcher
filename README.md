@@ -11,7 +11,7 @@ The 1.13 version remake by Ghost_chu(Minecraft SunnySide Community)
 * Very simple, throw an egg at a mob and it will be turned into a spawn egg.
 * Permissions support.
 * Configurable catch chance.
-* Configurable cost (vault support, or items).
+* Configurable cost (vault support).
 * Explosion effects.
 
 ## Installation and requirements ##
