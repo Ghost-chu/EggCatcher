@@ -23,8 +23,6 @@ import me.shansen.EggCatcher.EggCatcherLogger;
 import me.shansen.EggCatcher.EggType;
 import me.shansen.EggCatcher.events.EggCaptureEvent;
 
-import me.shansen.nbt.NbtReflection;
-
 import org.bukkit.Effect;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
